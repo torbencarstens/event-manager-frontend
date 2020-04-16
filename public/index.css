@@ -1,0 +1,143 @@
+.pagination {
+    margin-top: 1%;
+}
+
+.text-color {
+    color: #a39989;
+}
+
+.background-primary {
+    background-color: #414141;
+}
+
+.background-secondary {
+    background-color: #414141;
+}
+
+.flash {
+    background-color: #616161;
+    color: #FE877F;
+}
+
+.background-header {
+    background-color: #363636;
+}
+
+.header-color {
+    color: #7c8e51;
+}
+
+.link-color {
+    color: #8b9d83;
+}
+
+.link-color:hover {
+    color: #b4c0af;
+}
+
+.event-price-list-item {
+    color: #a1a1a1;
+}
+
+.event-price {
+    color: #dea75f;
+}
+
+.event-free {
+    color: #e5b980;
+}
+
+.event-currency {
+    color: #ce974f;
+}
+
+.event-description {
+    color: #F8F5E0;
+}
+
+.event-location {
+    color: #A6A691;
+}
+
+.event-organizer {
+    color: #a69c91;
+}
+
+.event-day:hover, .event-inline-body:hover {
+    background-color: #464646;
+}
+
+.event-inline-name {
+    color: #DE675F;
+}
+
+.event-inline-name:hover {
+    color: #FE877F;
+}
+
+.event-inline-icon {
+    color: #26B9D1;
+}
+
+.event-inline-location {
+    color: #A6A691;
+}
+
+.event-inline-location:hover {
+    color: #C6C6A1;
+}
+
+.event-inline-time {
+    color: #F8F5E0;
+}
+
+body {
+    color: #333;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+#location {
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 2%;
+}
+
+#event-list {
+    margin-left: 10%;
+    margin-right: 15%;
+}
+
+summary::-webkit-details-marker {
+    color: #00ACF3;
+    font-size: 125%;
+    margin-right: 2px;
+}
+
+summary:focus {
+    outline-style: none;
+}
+
+.day-header {
+    color: #a1a1a1;
+}
+
+article > details > summary {
+    font-size: 28px;
+    margin-top: 16px;
+    color: #a1a1a1;
+}
+
+details > p {
+    margin-left: 24px;
+}
+
+details details {
+    margin-left: 36px;
+}
+
+details details summary {
+    font-size: 16px;
+}

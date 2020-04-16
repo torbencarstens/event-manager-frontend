@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="icon" href="/public/header.png">
+
+    <link rel="stylesheet" href="/public/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/index.css">
+</head>
+<body class="background-secondary" background="#212121">
+{{> header}}
+{{#if flash}}
+    <p class="flash d-flex justify-content-center">{{ flash }}</p>
+{{/if}}
+{{~> page}}
+</body>
+</html>

@@ -1,0 +1,26 @@
+<div class="accordion background-primary" id="event-list">
+    {{#each days ~}}
+        {{~> event_day}}
+    {{/each~}}
+</div>
+
+<div class="d-flex justify-content-center justify-items-center pagination background-secondary">
+    <nav aria-label="Page navigation example" class="background-secondary">
+        <ul class="pagination background-secondary">
+            {{#previousnavigation}}
+            {{/previousnavigation}}
+            <li class="page-item background-secondary"><a class="page-link text-color background-secondary"
+                                                          href="/{{ page_id }}">{{ page_id }}</a></li>
+            {{#nextnavigation}}
+                <li class="page-item background-secondary"><a class="page-link text-color background-secondary"
+                                                              href="/{{ add page_id 1 }}">{{ add page_id 1 }}</a></li>
+                <li class="page-item background-secondary">
+                    <a class="page-link text-color background-secondary" href="/{{ add page_id 1 }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            {{/nextnavigation}}
+        </ul>
+    </nav>
+</div>

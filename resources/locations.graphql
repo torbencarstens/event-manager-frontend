@@ -1,0 +1,14 @@
+query Location($constraints: Constraints, $input: LocationQuery) {
+    location(constraints: $constraints, query: $input) {
+        id
+        name
+        building
+        city
+        country
+        mapsLink
+        postalCode
+        street
+        streetNumber
+        website
+    }
+}

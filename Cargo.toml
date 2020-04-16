@@ -1,0 +1,19 @@
+[package]
+name = "events_frontend"
+version = "0.1.0"
+authors = ["Torben Carstens <github@carstens.tech>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = { version = "0.4.11", features = ["serde"] }
+graphql_client = "0.9.0"
+ics = "0.4.2"
+reqwest = { version = "0.10.4", features = ["blocking", "json"] }
+rocket = "0.4.4"
+rocket_contrib = { version = "0.4.4", features = ["handlebars_templates", "serve"], default-features = false }
+serde = "1.0.105"
+serde_derive = "1.0.105"
+serde_json = "1.0.51"
+uuid = { version = "0.8.1", features = ["v4"] }

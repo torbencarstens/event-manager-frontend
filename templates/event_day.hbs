@@ -1,0 +1,19 @@
+<section class="container-fluid" id="{{ time_custom day "%d.%B.%Y" }}">
+    <article class="collapse show events" id="events-{{ time_custom day "%s" }}"
+             aria-labelledby="events-{{ time_custom day "%s" }}">
+        <details open>
+            <summary>
+                <h3 class="day-header" style="display: inline;">
+                    {{ time_custom day "%A // %d.%B.%Y" }}
+                </h3>
+            </summary>
+            <div>
+                {{#each events}}
+                    <div class="background-primary card event-day" style="margin-left: 30px;">
+                        {{~> event_inline}}
+                    </div>
+                {{/each}}
+            </div>
+        </details>
+    </article>
+</section>

@@ -1,0 +1,83 @@
+schema {
+    query: QueryRoot,
+}
+
+type QueryRoot {
+    event(constraints: Constraints, query: EventQuery): [Event!]!
+    location(constraints: Constraints, query: LocationQuery): [Location!]!
+    organizer(constraints: Constraints, query: OrganizerQuery): [Organizer!]!
+    pagination: Pagination!
+}
+
+type Pagination {
+    eventCount: String!,
+    locationCount: String!,
+    organizerCount: String!,
+}
+
+input Constraints {
+    offset: String!
+    limit: String!
+}
+
+input OrganizerQuery {
+    id: Int
+    name: String
+    website: String
+}
+
+input LocationQuery {
+    id: Int
+    name: String
+    website: String
+    street: String
+    streetNumber: Int
+    city: String
+    country: String
+    postalCode: Int
+    building: String
+    mapsLink: String
+}
+
+input EventQuery {
+    id: Int
+    name: String
+    description: String
+    timestamp: String
+    timestampEnd: String
+    price: Int
+    currency: String
+    locationId: Int
+    organizerId: Int
+}
+
+type Event {
+    id: Int!
+    name: String!
+    description: String!
+    timestamp: String!
+    timestampEnd: String!
+    price: Int
+    currency: String
+    location: Location!
+    organizer: Organizer
+}
+
+type Organizer {
+    id: Int!
+    name: String!
+    website: String
+}
+
+type Location {
+    id: Int!
+    name: String!
+    website: String
+    street: String!
+    streetNumber: Int!
+    city: String!
+    country: String!
+    postalCode: Int!
+    building: String
+    mapsLink: String!
+}

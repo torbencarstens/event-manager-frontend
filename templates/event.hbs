@@ -1,0 +1,32 @@
+{{#*inline "page"}}
+    {{#with event }}
+        <div id="event-{{ id }}" class="card mx-auto m-2 background-secondary" style="width: 60%;">
+            <div class="card-body background-secondary">
+                <div class="d-flex justify-content-between">
+                    <h1 class="card-title event-inline-name" style="display: inline;">
+                        {{ name }}
+                    </h1>
+                    <h3 class="event-inline-time">
+                        {{ time_custom time "%A" }} {{ time_custom time "%H:%M" }} - {{ time_custom time_end "%H:%M" }}
+                    </h3>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush background-secondary">
+                <li class="card-subtitle list-group-item background-secondary event-price-list-item">
+                    {{#if price }}
+                        <span class="event-price">{{ price }}</span> <span class="event-currency">{{ currency }}</span>
+                    {{ else }}
+                        <span class="event-free">Kostenlos</span>
+                    {{/if}}
+                </li>
+                <li class="list-group-item background-secondary event-description">
+                    {{ description }}
+                </li>
+                {{~> location_list_item }}
+                {{~> organizer_list_item }}
+            </ul>
+        </div>
+    {{/with}}
+
+{{/inline}}
+{{~> (parent)~}}

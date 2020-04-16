@@ -1,0 +1,36 @@
+{{#with location }}
+    <li class="list-group-item background-secondary event-location">
+        <h3>
+            <a href="/location/{{ id }}" class="event-location">{{ name }}</a>
+            <a href="{{ website }}" class="event-inline-icon">
+                <svg class="bi bi-link-45deg" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.715 6.542L3.343 7.914a3 3 0 104.243 4.243l1.828-1.829A3 3 0 008.586 5.5L8 6.086a1.001 1.001 0 00-.154.199 2 2 0 01.861 3.337L6.88 11.45a2 2 0 11-2.83-2.83l.793-.792a4.018 4.018 0 01-.128-1.287z"/>
+                    <path d="M5.712 6.96l.167-.167a1.99 1.99 0 01.896-.518 1.99 1.99 0 01.518-.896l.167-.167A3.004 3.004 0 006 5.499c-.22.46-.316.963-.288 1.46z"/>
+                    <path d="M6.586 4.672A3 3 0 007.414 9.5l.775-.776a2 2 0 01-.896-3.346L9.12 3.55a2 2 0 012.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 00-4.243-4.243L6.586 4.672z"/>
+                    <path d="M10 9.5a2.99 2.99 0 00.288-1.46l-.167.167a1.99 1.99 0 01-.896.518 1.99 1.99 0 01-.518.896l-.167.167A3.004 3.004 0 0010 9.501z"/>
+                </svg>
+            </a>
+        </h3>
+        <div style="margin-left: 1rem;">
+            {{ street }} {{ street_number }}
+            <br>
+            {{#if building }}
+                <b>Building</b> {{ building }}
+                <br>
+            {{/if}}
+            <span id="postal-code">{{ postal_code }}</span> <span id="city">{{ city }}</span>
+            <br>
+            <span id="country">{{ country }}</span>
+            <br>
+            <a href="{{ maps_link }}" class="location-link event-inline-icon">
+                <svg class="bi bi-map" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M15.817.613A.5.5 0 0116 1v13a.5.5 0 01-.402.49l-5 1a.502.502 0 01-.196 0L5.5 14.51l-4.902.98A.5.5 0 010 15V2a.5.5 0 01.402-.49l5-1a.5.5 0 01.196 0l4.902.98 4.902-.98a.5.5 0 01.415.103zM10 2.41l-4-.8v11.98l4 .8V2.41zm1 11.98l4-.8V1.61l-4 .8v11.98zm-6-.8V1.61l-4 .8v11.98l4-.8z"
+                          clip-rule="evenodd"/>
+                </svg>
+            </a>
+        </div>
+    </li>
+{{/with}}

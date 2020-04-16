@@ -1,0 +1,7 @@
+query Pagination {
+    pagination {
+        eventCount
+        locationCount
+        organizerCount
+    }
+}

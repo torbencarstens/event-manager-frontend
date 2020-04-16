@@ -1,0 +1,47 @@
+<div id="event-{{ id }}" class="row card-body background-primary event-inline-body"
+     style="padding: 0.25rem; margin-left: 5px; margin-right: 5px;">
+    <div class=" p-2 col event-title">
+        <a href="/event/{{ id }}" class="event-inline-name">
+            {{ name }}
+        </a>
+    </div>
+    <!--    <div class="p-2 ">-->
+    <!--        <div class="age">{{ age }}+</div>-->
+    <!--    </div>-->
+    <div class="p-2 col location" id="location-{{location.id}}">
+        <a href="/location/{{ location.id }}" title="{{ location.website }}" class="event-inline-location">
+            {{ location.name }}
+        </a>
+        <span class="p-2 col col-auto location-icon" id="location-icon-{{location.id}}">
+            <a href="{{ location.maps_link }}" class="location-link event-inline-icon">
+                <svg class="bi bi-map" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M15.817.613A.5.5 0 0116 1v13a.5.5 0 01-.402.49l-5 1a.502.502 0 01-.196 0L5.5 14.51l-4.902.98A.5.5 0 010 15V2a.5.5 0 01.402-.49l5-1a.5.5 0 01.196 0l4.902.98 4.902-.98a.5.5 0 01.415.103zM10 2.41l-4-.8v11.98l4 .8V2.41zm1 11.98l4-.8V1.61l-4 .8v11.98zm-6-.8V1.61l-4 .8v11.98l4-.8z"
+                          clip-rule="evenodd"/>
+                </svg>
+            </a>
+        </span>
+    </div>
+    <div id="event-{{ id }}-time" class="p-2 col time">
+        <span class="event-inline-time">
+            <span title="{{ time_custom time "%H:%M %d.%m.%Y"}}">{{ time_custom time
+                                                                                "%H:%M" }}</span>
+            -
+            <span title="{{ time_custom time_end "%H:%M %d.%m.%Y"}}">
+                {{ time_custom time_end "%H:%M" }}</span>
+        </span>
+        <a href="/event/{{ id }}/ics" id="event-{{ id }}-ics" class="calendar-link event-inline-icon">
+            <svg class="bi bi-calendar" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                      d="M14 0H2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"
+                      clip-rule="evenodd"/>
+                <path fill-rule="evenodd"
+                      d="M6.5 7a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2z"
+                      clip-rule="evenodd"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
