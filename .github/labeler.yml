@@ -1,0 +1,16 @@
+rust:
+  - src/**/*.rs
+
+cargo:
+  - Cargo.*
+
+database:
+  - database/*
+  - src/database/*
+
+sql:
+  - ./**/*.sql
+
+graphql:
+  - ./**/*.graphql
+

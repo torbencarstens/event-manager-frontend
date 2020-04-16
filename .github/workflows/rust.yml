@@ -1,0 +1,16 @@
+name: Rust
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install postgres dependencies
+        run: sudo apt-get install -y libpq-dev
+      - name: Install nightly
+        run: rustup update nightly
+      - name: Build
+        run: cargo +nightly build --verbose
