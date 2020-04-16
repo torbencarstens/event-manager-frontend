@@ -268,7 +268,7 @@ fn get_events(variables: event::Variables) -> io::Result<Vec<Event>> {
     let body = Event::build_query(variables);
 
     let client = reqwest::blocking::Client::new();
-    let res = match client.post("http://localhost:8001/graphql").json(&body).send() {
+    let res = match client.post(BACKEND_URL).json(&body).send() {
         Ok(val) => Ok(val),
         Err(e) => Err(ioerror(format!("{:#?}", e)))
     }?;
