@@ -32,7 +32,7 @@ use rocket_contrib::templates::handlebars::{Context, Handlebars, Helper, HelperR
 use rocket_contrib::templates::handlebars::template::{HelperTemplate, Parameter, TemplateElement};
 use rocket_contrib::templates::Template;
 
-use events_frontend::{BACKEND_URL, PaginationContext};
+use events_frontend::{backend_url, PaginationContext};
 use events_frontend::helper::*;
 
 #[derive(Clone, Debug, Deserialize, GraphQLQuery, Serialize)]
@@ -363,7 +363,7 @@ fn get_tags(variables: tag::Variables) -> io::Result<Vec<Tag>> {
     let body = Tag::build_query(variables);
 
     let client = reqwest::blocking::Client::new();
-    let res = match client.post(BACKEND_URL).json(&body).send() {
+    let res = match client.post(&backend_url()).json(&body).send() {
         Ok(val) => Ok(val),
         Err(e) => Err(ioerror(format!("{:#?}", e)))
     }?;
@@ -386,7 +386,7 @@ fn get_locations(variables: location::Variables) -> io::Result<Vec<Location>> {
     let body = Location::build_query(variables);
 
     let client = reqwest::blocking::Client::new();
-    let res = match client.post(BACKEND_URL).json(&body).send() {
+    let res = match client.post(&backend_url()).json(&body).send() {
         Ok(val) => Ok(val),
         Err(e) => Err(ioerror(format!("{:#?}", e)))
     }?;
@@ -409,7 +409,7 @@ fn get_events(variables: event::Variables) -> io::Result<Vec<Event>> {
     let body = Event::build_query(variables);
 
     let client = reqwest::blocking::Client::new();
-    let res = match client.post(BACKEND_URL).json(&body).send() {
+    let res = match client.post(&backend_url()).json(&body).send() {
         Ok(val) => Ok(val),
         Err(e) => Err(ioerror(format!("{:#?}", e)))
     }?;

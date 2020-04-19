@@ -2,7 +2,7 @@ use std::io;
 
 use graphql_client::{GraphQLQuery, Response};
 
-use crate::BACKEND_URL;
+use crate::backend_url;
 
 #[derive(Clone, Debug, Deserialize, GraphQLQuery, Serialize)]
 #[graphql(
@@ -17,19 +17,31 @@ pub struct Pagination {
 }
 
 pub(crate) fn get_pagination() -> io::Result<Pagination> {
-    let ioerror = |desc| io::Error::new(io::ErrorKind::Other, desc);
+    let ioerror = |desc: &str| io::Error::new(io::ErrorKind::Other, desc);
     let body = Pagination::build_query(pagination::Variables {});
 
     let client = reqwest::blocking::Client::new();
-    let res = match client.post(BACKEND_URL).json(&body).send() {
+    let res = match client.post(&backend_url()).json(&body).send() {
         Ok(val) => Ok(val),
-        Err(e) => Err(ioerror(format!("{:#?}", e)))
+        Err(e) => Err(ioerror(format!("{:#?}", e).as_ref()))
     }?;
     let response: Response<pagination::ResponseData> = res.json().map_err(|e|
-        ioerror(format!("Couldn't get successful response from server: {}", e))
+        ioerror(format!("Couldn't get successful response from server: {}", e).as_ref())
     )?;
     let data = response.data.ok_or(
-        ioerror(format!("Couldn't get data field from response: {:?}", response.errors.and_then(|x| Some(x.into_iter().map(|x| x.message).collect::<Vec<String>>().join(" | ")))))
+        ioerror(
+            format!(
+                "Couldn't get data field from response: {:?}",
+                response
+                    .errors
+                    .and_then(|x|
+                        Some(x
+                            .into_iter()
+                            .map(|x|
+                                x.message)
+                            .collect::<Vec<String>>()
+                            .join(" | ")
+                        ))).as_ref())
     )?;
 
     Ok(From::from(data.pagination))

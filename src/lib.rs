@@ -13,5 +13,7 @@ pub use pagination::*;
 pub mod helper;
 pub mod pagination;
 
-pub static BACKEND_URL: &'static str = "http://localhost:8001/graphql";
+pub fn backend_url() -> String {
+    std::env::var("BACKEND_URL").unwrap_or("http://localhost:8001/graphql".to_string())
+}
 // pub static BACKEND_URL: &'static str = "http://events.carstens.tech/graphql";
