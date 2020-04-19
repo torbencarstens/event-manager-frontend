@@ -7,12 +7,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Login to Github Packages
-        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Login to dockerhub
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u torbencarstens --password-stdin
       - name: Get the version
         id: vars
-        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+        run: echo ::set-output name=tag::$(echo ${GITHUB_SHA})
       - name: Build the tagged Docker image
-        run: docker build -t docker.pkg.github.com/torbencarstens/event-manager-frontend/frontend:${{steps.vars.outputs.tag}}
+        run: docker build -t torbencarstens/event_manager:${{steps.vars.outputs.tag}} .
       - name: Push the tagged Docker image
-        run: docker push docker.pkg.github.com/torbencarstens/event-manager-frontend/frontend:${{steps.vars.outputs.tag}}
+        run: docker push torbencarstens/event_manager:${{steps.vars.outputs.tag}}
+      - name: get kube config
+        uses: digitalocean/action-doctl@master
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        with:
+          args: kubernetes cluster kubeconfig show torbencarstens > $GITHUB_WORKSPACE/.kubeconfig
+      - name: update image tag
+        run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig set image deployment event-manager event-manager=torbencarstens/event_manager:$(echo ${GITHUB_SHA})
