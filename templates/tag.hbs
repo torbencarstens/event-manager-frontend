@@ -1,0 +1,25 @@
+{{#*inline "page"}}
+    {{#with tag }}
+        <div class="list-group-item background-secondary event-tag" id="tag">
+            <h3>
+                <a href="/tag/{{ id }}" class="event-tag">{{ name }}</a>
+            </h3>
+        {{#if description }}
+                <hr>
+                <div>
+                    {{ description }}
+                </div>
+        {{/if}}
+            <hr>
+            <h5>Events which have this tag</h5>
+            <ul>
+                {{#each events }}
+                    <div class="background-primary card event-day" style="margin-left: 30px;">
+                        {{~> event_inline}}
+                    </div>
+                {{/each}}
+            </ul>
+    {{/with}}
+    </div>
+{{/inline}}
+{{~> (parent)~}}

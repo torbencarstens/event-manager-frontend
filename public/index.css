@@ -1,3 +1,16 @@
+.header-item {
+    margin-left: 2rem;
+}
+
+.tag {
+    background-color: #363636;
+    color: #B8B5A0;
+}
+
+.location-inline-info {
+    color: #B8B5A0;
+}
+
 .pagination {
     margin-top: 1%;
 }
@@ -59,6 +72,10 @@
     color: #A6A691;
 }
 
+.event-tag {
+    color: #A6A691;
+}
+
 .event-organizer {
     color: #a69c91;
 }
@@ -100,6 +117,12 @@ body {
 }
 
 #location {
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 2%;
+}
+
+#tag {
     margin-left: 10%;
     margin-right: 10%;
     margin-top: 2%;

@@ -14,3 +14,4 @@ pub mod helper;
 pub mod pagination;
 
 pub static BACKEND_URL: &'static str = "http://localhost:8001/graphql";
+// pub static BACKEND_URL: &'static str = "http://events.carstens.tech/graphql";

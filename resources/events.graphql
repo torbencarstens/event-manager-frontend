@@ -24,5 +24,10 @@ query Event($constraints: Constraints, $input: EventQuery) {
             name
             website
         }
+        tags {
+            id
+            name
+            description
+        }
     }
 }

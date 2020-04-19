@@ -1,0 +1,38 @@
+query Tag($constraints: Constraints, $input: TagQuery) {
+    tag(constraints: $constraints, query: $input) {
+        id
+        name
+        description
+        events {
+            id
+            name
+            description
+            timestamp
+            timestampEnd
+            price
+            currency
+            location {
+                id
+                name
+                website
+                street
+                streetNumber
+                city
+                postalCode
+                country
+                building
+                mapsLink
+            }
+            organizer {
+                id
+                name
+                website
+            }
+            tags {
+                id
+                name
+                description
+            }
+        }
+    }
+}

@@ -6,8 +6,13 @@
                     <h1 class="card-title event-inline-name" style="display: inline;">
                         {{ name }}
                     </h1>
-                    <h3 class="event-inline-time">
-                        {{ time_custom time "%A" }} {{ time_custom time "%H:%M" }} - {{ time_custom time_end "%H:%M" }}
+                    <h3 class="event-inline-time" title="{{ time_custom time "%d.%m.%Y %H:%M" }}">
+                        <div>
+                            {{ time_custom time "%A" }} {{ time_custom time "%H:%M" }} - {{ time_custom time_end
+                                                                                                        "%H:%M" }}
+                            <br>
+                            {{ time_custom time "%d.%m.%Y" }}
+                        </div>
                     </h3>
                 </div>
             </div>
@@ -22,9 +27,16 @@
                 <li class="list-group-item background-secondary event-description">
                     {{ description }}
                 </li>
-                {{~> location_list_item }}
+                {{#with location }}
+                    {{~> location_list_item }}
+                {{/with}}
                 {{~> organizer_list_item }}
             </ul>
+            <div class="tags">
+                {{#each tags}}
+                    {{~> tag_inline }}
+                {{/each}}
+            </div>
         </div>
     {{/with}}
 

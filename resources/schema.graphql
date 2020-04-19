@@ -7,6 +7,20 @@ type QueryRoot {
     location(constraints: Constraints, query: LocationQuery): [Location!]!
     organizer(constraints: Constraints, query: OrganizerQuery): [Organizer!]!
     pagination: Pagination!
+    tag(constraints: Constraints, query: TagQuery): [Tag!]!
+}
+
+type InnerEventTag {
+    id: Int!,
+    name: String!,
+    description: String
+}
+
+type Tag {
+    id: Int!,
+    name: String!,
+    description: String,
+    events: [Event!]!
 }
 
 type Pagination {
@@ -51,6 +65,12 @@ input EventQuery {
     organizerId: Int
 }
 
+input TagQuery {
+    id: Int
+    name: String
+    description: String
+}
+
 type Event {
     id: Int!
     name: String!
@@ -61,6 +81,7 @@ type Event {
     currency: String
     location: Location!
     organizer: Organizer
+    tags: [InnerEventTag!]!
 }
 
 type Organizer {

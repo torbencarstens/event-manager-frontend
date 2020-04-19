@@ -54,6 +54,19 @@ struct Location {
     maps_link: String,
 }
 
+#[derive(Clone, Debug, Deserialize, GraphQLQuery, Serialize)]
+#[graphql(
+schema_path = "resources/schema.graphql",
+query_path = "resources/tags.graphql",
+response_derives = "Deserialize, Serialize, Debug"
+)]
+struct Tag {
+    id: i64,
+    name: String,
+    description: Option<String>,
+    events: Vec<Event>,
+}
+
 impl Location {
     fn to_ics(&self) -> ics::properties::Location {
         ics::properties::Location::new(
@@ -86,6 +99,51 @@ impl From<location::LocationLocation> for Location {
     }
 }
 
+impl From<tag::TagTag> for Tag {
+    fn from(tag: tag::TagTag) -> Self {
+        Tag {
+            id: tag.id,
+            name: tag.name,
+            description: tag.description,
+            events: tag.events.into_iter().map(|event: tag::TagTagEvents| Event {
+                id: event.id,
+                name: event.name,
+                description: event.description,
+                time: NaiveDateTime::from_timestamp(event.timestamp.parse::<i64>().unwrap(), 0),
+                time_end: NaiveDateTime::from_timestamp(event.timestamp_end.parse::<i64>().unwrap(), 0),
+                price: event.price,
+                currency: event.currency,
+                location: Location {
+                    id: event.location.id,
+                    name: event.location.name,
+                    website: event.location.website,
+                    street: event.location.street,
+                    street_number: event.location.street_number as i32,
+                    city: event.location.city,
+                    postal_code: event.location.postal_code as i32,
+                    country: event.location.country,
+                    building: event.location.building,
+                    maps_link: event.location.maps_link,
+                },
+                organizer: event.organizer.and_then(|organizer| Some(Organizer {
+                    id: organizer.id,
+                    name: organizer.name,
+                    website: organizer.website,
+                })),
+                tags: event
+                    .tags
+                    .into_iter()
+                    .map(|tag| InnerEventTag {
+                        id: tag.id,
+                        name: tag.name,
+                        description: tag.description,
+                    })
+                    .collect(),
+            }).collect::<Vec<Event>>(),
+        }
+    }
+}
+
 impl From<event::EventEvent> for Event {
     fn from(event: event::EventEvent) -> Event {
         Event {
@@ -113,8 +171,30 @@ impl From<event::EventEvent> for Event {
                 name: organizer.name,
                 website: organizer.website,
             })),
+            tags: event
+                .tags
+                .into_iter()
+                .map(|tag| tag.into())
+                .collect(),
         }
     }
+}
+
+impl Into<InnerEventTag> for event::EventEventTags {
+    fn into(self) -> InnerEventTag {
+        InnerEventTag {
+            id: self.id,
+            name: self.name,
+            description: self.description,
+        }
+    }
+}
+
+
+struct TagInput {
+    id: Option<i64>,
+    name: Option<String>,
+    description: Option<String>,
 }
 
 struct LocationInput {
@@ -165,6 +245,25 @@ impl Into<event::Variables> for EventInput {
     }
 }
 
+impl Into<tag::Variables> for TagInput {
+    fn into(self) -> tag::Variables {
+        let default_pagination = PaginationContext::default();
+
+        tag::Variables {
+            constraints: Some(tag::Constraints {
+                limit: default_pagination.limit.to_string(),
+                offset: default_pagination.offset.to_string(),
+            }),
+            input: Some(tag::TagQuery
+            {
+                id: self.id,
+                name: self.name,
+                description: self.description,
+            }),
+        }
+    }
+}
+
 impl Into<location::Variables> for LocationInput {
     fn into(self) -> location::Variables {
         let default_pagination = PaginationContext::default();
@@ -190,6 +289,13 @@ impl Into<location::Variables> for LocationInput {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+struct InnerEventTag {
+    id: i64,
+    name: String,
+    description: Option<String>,
+}
+
 #[derive(Clone, Debug, GraphQLQuery, Serialize, Deserialize)]
 #[graphql(
 schema_path = "resources/schema.graphql",
@@ -206,6 +312,7 @@ struct Event {
     currency: Option<String>,
     location: Location,
     organizer: Option<Organizer>,
+    tags: Vec<InnerEventTag>,
 }
 
 // TODO: return an event without a location
@@ -238,6 +345,40 @@ fn get_location(id: i64) -> io::Result<Location> {
     }.into())?
         .pop()
         .ok_or(io::Error::from(io::ErrorKind::NotFound))
+}
+
+
+fn get_tag(id: i64) -> io::Result<Tag> {
+    get_tags(TagInput {
+        id: Some(id),
+        name: None,
+        description: None,
+    }.into())?
+        .pop()
+        .ok_or(io::Error::from(io::ErrorKind::NotFound))
+}
+
+fn get_tags(variables: tag::Variables) -> io::Result<Vec<Tag>> {
+    let ioerror = |desc| io::Error::new(io::ErrorKind::Other, desc);
+    let body = Tag::build_query(variables);
+
+    let client = reqwest::blocking::Client::new();
+    let res = match client.post(BACKEND_URL).json(&body).send() {
+        Ok(val) => Ok(val),
+        Err(e) => Err(ioerror(format!("{:#?}", e)))
+    }?;
+    let response: Response<tag::ResponseData> = res.json().map_err(|e|
+        ioerror(format!("Couldn't get successful response from server: {}", e))
+    )?;
+    let data = response.data.ok_or(
+        ioerror(format!("Couldn't get data field from response: {:?}", response.errors.and_then(|x| Some(x.into_iter().map(|x| x.message).collect::<Vec<String>>().join(" | ")))))
+    )?;
+
+    Ok(data
+        .tag
+        .into_iter()
+        .map(From::from)
+        .collect::<Vec<Tag>>())
 }
 
 fn get_locations(variables: location::Variables) -> io::Result<Vec<Location>> {
@@ -315,7 +456,15 @@ struct DayEventContext {
 }
 
 #[derive(Deserialize, Serialize)]
-struct TemplateContext<'a> {
+struct LocationListTemplateContext<'a> {
+    title: String,
+    parent: &'a str,
+    page_id: u32,
+    locations: Vec<Location>,
+}
+
+#[derive(Deserialize, Serialize)]
+struct EventListTemplateContext<'a> {
     title: String,
     parent: &'a str,
     page_id: u32,
@@ -382,10 +531,52 @@ fn get_events_day_contexts(pagination: PaginationContext) -> io::Result<Vec<DayE
 
 #[get("/")]
 fn index(flash: Option<FlashMessage<'_, '_>>) -> Redirect {
-    Redirect::to("/1")
+    Redirect::to("/events/1") // there has to be a better option
 }
 
-#[get("/<id>")]
+#[get("/locations")]
+fn locations(flash: Option<FlashMessage<'_, '_>>) -> Redirect {
+    Redirect::to("/locations/1") // there has to be a better option
+}
+
+#[get("/locations/<id>")]
+fn locations_numbered(id: Option<u32>) -> Template {
+    let page_id = max(1, id.unwrap_or(1));
+    let pagination = if page_id > 1 {
+        let mut context = PaginationContext::default();
+        context.offset = context.limit * (page_id - 1);
+        context
+    } else {
+        PaginationContext::default()
+    };
+
+    let mut input: location::Variables = LocationInput {
+        id: None,
+        name: None,
+        website: None,
+        street: None,
+        street_number: None,
+        city: None,
+        postal_code: None,
+        country: None,
+        building: None,
+        maps_link: None,
+    }.into();
+    input.constraints = Some(location::Constraints {
+        limit: pagination.limit.to_string(),
+        offset: pagination.offset.to_string(),
+    });
+    let locations = get_locations(input).unwrap(); // TODO
+
+    Template::render("locations", LocationListTemplateContext {
+        title: "Locations".to_string(),
+        parent: "layout",
+        page_id,
+        locations,
+    })
+}
+
+#[get("/events/<id>")]
 fn numbered_index(id: Option<u32>, flash: Option<FlashMessage<'_, '_>>) -> Template {
     let page_id = max(1, id.unwrap_or(1));
     let pagination = if page_id > 1 {
@@ -397,7 +588,7 @@ fn numbered_index(id: Option<u32>, flash: Option<FlashMessage<'_, '_>>) -> Templ
     };
     let days = get_events_day_contexts(pagination).unwrap(); // TODO
 
-    let context = TemplateContext {
+    let context = EventListTemplateContext {
         title: "Events".to_string(),
         parent: "layout",
         page_id,
@@ -421,6 +612,13 @@ struct LocationTemplateContext<'a> {
     parent: &'a str,
     location: Location,
     events: Vec<Event>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct TagTemplateContext<'a> {
+    title: String,
+    parent: &'a str,
+    tag: Tag,
 }
 
 #[get("/event/<id>")]
@@ -447,6 +645,19 @@ fn event_ics(id: i64) -> io::Result<Content<Stream<Cursor<Vec<u8>>>>> {
 #[get("/event/<id>/location")]
 fn event_location(id: i64) -> io::Result<Redirect> {
     Ok(Redirect::permanent(format!("/location/{}", get_event(id)?.location.id)))
+}
+
+#[get("/tag/<id>")]
+fn tag(id: i64) -> Template {
+    let tag = get_tag(id).unwrap(); // TODO
+
+    let context = TagTemplateContext {
+        title: tag.name.clone(),
+        parent: "layout",
+        tag,
+    };
+
+    Template::render("tag", context)
 }
 
 #[get("/location/<id>")]
@@ -503,7 +714,10 @@ fn main() {
             event_ics,
             event_location,
             session,
-            location
+            location,
+            tag,
+            locations,
+            locations_numbered,
         ])
         .mount("/public", StaticFiles::from("public/"))
         .launch();

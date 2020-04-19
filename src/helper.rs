@@ -23,18 +23,23 @@ pub fn helper_previous_navigation(h: &Helper, _: &Handlebars, context: &Context,
         .and_then(|x|
             x.as_i64())
         .unwrap_or(1i64);
+    let link_prefix = if let Some(param) = h.param(0) {
+        param.value().as_str().unwrap_or("")
+    } else {
+        ""
+    };
 
     let value = if page_id != 1 {
         format!(r#"<li class="page-item background-secondary">
-                    <a class="page-link text-color background-secondary" href="/{}"
+                    <a class="page-link text-color background-secondary" href="/{}{}"
                        aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">Previous</span>
                     </a>
                 </li>
                 <li class="page-item background-secondary"><a class="page-link text-color background-secondary"
-                                                              href="/{}">{}</a>
-                </li>"#, page_id - 1, page_id - 1, page_id - 1)
+                                                              href="/{}{}">{}</a>
+                </li>"#, link_prefix, page_id - 1, link_prefix, page_id - 1, page_id - 1)
     } else {
         String::new()
     };
@@ -119,9 +124,18 @@ pub fn helper_next_navigation(h: &Helper, _: &Handlebars, context: &Context, rc:
         .and_then(|x|
             x.as_i64())
         .unwrap_or(1i64);
+    let pagination_context = h
+        .param(0)
+        .and_then(|param|
+            param.value().as_str())
+        .unwrap_or("events");
     let events_count = get_pagination()
         .and_then(|x|
-            Ok(x.event_count))
+            Ok(match pagination_context {
+                "locations" => x.location_count,
+                "organizers" => x.organizer_count,
+                _ => x.event_count
+            }))
         .unwrap_or(PaginationContext::default().limit as i64);
 
     if page_id >= (events_count / PaginationContext::default().limit as i64) {
