@@ -13,9 +13,9 @@ jobs:
         id: vars
         run: echo ::set-output name=tag::$(echo ${GITHUB_SHA})
       - name: Build the tagged Docker image
-        run: docker build -t torbencarstens/event_manager:${{steps.vars.outputs.tag}} .
+        run: docker build -t torbencarstens/event_manager_frontend:${{steps.vars.outputs.tag}} .
       - name: Push the tagged Docker image
-        run: docker push torbencarstens/event_manager:${{steps.vars.outputs.tag}}
+        run: docker push torbencarstens/event_manager_frontend:${{steps.vars.outputs.tag}}
       - name: get kube config
         uses: digitalocean/action-doctl@master
         env:
@@ -23,4 +23,4 @@ jobs:
         with:
           args: kubernetes cluster kubeconfig show torbencarstens > $GITHUB_WORKSPACE/.kubeconfig
       - name: update image tag
-        run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig set image deployment event-manager event-manager=torbencarstens/event_manager:$(echo ${GITHUB_SHA})
+        run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig set image deployment event-manager-frontend event-manager-frontend=torbencarstens/event_manager_frontend:$(echo ${GITHUB_SHA})
