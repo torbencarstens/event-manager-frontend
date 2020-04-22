@@ -28,18 +28,18 @@ spec:
         app: event-manager-frontend
     spec:
       containers:
-      - name: event-manager-frontend
-        image: torbencarstens/event_manager_frontend
-        ports:
-        - containerPort: 80
-          protocol: TCP
-        envFrom:
+        - name: event-manager-frontend
+          image: torbencarstens/event_manager_frontend
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          envFrom:
             - configMapRef:
-                name: config
+                name: event-manager-frontend-config
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: config
+  name: event-manager-frontend-config
 data:
-    BACKEND_URL: http://events.carstens.tech/graphql
+  ROCKET_ENV: prod
