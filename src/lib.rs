@@ -26,6 +26,6 @@ pub fn backend_url() -> String {
             } else {
                 "http://localhost:8001/graphql"
             }
-        }
+        }.to_string()
     }
 }
