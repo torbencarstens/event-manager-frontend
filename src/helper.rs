@@ -157,3 +157,33 @@ pub fn helper_time_custom_format(h: &Helper, _: &Handlebars, context: &Context, 
     out.write(JsonValue::String(value.format(format_string).to_string()).render().as_ref())?;
     Ok(())
 }
+
+pub fn helper_format_description(h: &Helper, _: &Handlebars, _: &Context, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    let param = h.param(0).unwrap();
+    let description = param.value().as_str().unwrap();
+
+    let result = (description.to_string() + " http://carstens.tech").split_whitespace().map(|element| {
+        if element.starts_with("http") {
+            format!("<a href='{}' class='description-link'>{}</a>", element, element)
+        } else {
+            element.to_string()
+        }
+    })
+        .collect::<Vec<String>>()
+        .join(" ");
+
+    out.write(JsonValue::String(result).render().as_ref())?;
+    Ok(())
+}
+
+pub fn helper_unwrap_or(h: &Helper, _: &Handlebars, _: &Context, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    let param = h.param(0).unwrap();
+    let param2 = h.param(1).unwrap();
+    let optional = param.value().as_str();
+    let or = param2.value().as_str().unwrap();
+
+    let value = optional.unwrap_or(or);
+
+    out.write(JsonValue::String(value.to_string()).render().as_ref())?;
+    Ok(())
+}

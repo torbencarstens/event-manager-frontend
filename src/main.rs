@@ -38,7 +38,7 @@ use events_frontend::helper::*;
 #[derive(Clone, Debug, Deserialize, GraphQLQuery, Serialize)]
 #[graphql(
 schema_path = "resources/schema.graphql",
-query_path = "resources/locations.graphql",
+query_path = "resources/location.graphql",
 response_derives = "Deserialize, Serialize, Debug"
 )]
 struct Location {
@@ -706,6 +706,8 @@ fn main() {
             engines.handlebars.register_helper("add", Box::new(helper_add));
             engines.handlebars.register_helper("previousnavigation", Box::new(helper_previous_navigation));
             engines.handlebars.register_helper("nextnavigation", Box::new(helper_next_navigation));
+            engines.handlebars.register_helper("format_description", Box::new(helper_format_description));
+            engines.handlebars.register_helper("unwrap_or", Box::new(helper_unwrap_or));
         }))
         .mount("/", routes![
             event,

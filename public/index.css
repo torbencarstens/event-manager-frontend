@@ -7,6 +7,10 @@
     color: #B8B5A0;
 }
 
+a > span.tag:hover {
+    color: #D8D5C0;
+}
+
 .location-inline-info {
     color: #B8B5A0;
 }
@@ -68,8 +72,20 @@
     color: #F8F5E0;
 }
 
+.description-link {
+    color: #e5b980;
+}
+
+.description-link:hover {
+    color: #f5d9a0;
+}
+
 .event-location {
     color: #A6A691;
+}
+
+a.event-location:hover {
+    color: #D6D6B1;
 }
 
 .event-tag {
