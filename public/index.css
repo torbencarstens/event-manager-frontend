@@ -80,6 +80,26 @@ a > span.tag:hover {
     color: #f5d9a0;
 }
 
+.input-background {
+    color: #F8F5E0;
+    background-color: #616161;
+    border: 1px solid #212121;
+    margin-bottom: 1.5rem;
+}
+
+.input-background:focus {
+    color: #F8F5E0;
+    background-color: #818181;
+    border: 1px solid #818181;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 0 2px #7c8e51;
+}
+
+.required:after {
+    content: " *";
+    color: #993333;
+}
+
 .event-location {
     color: #A6A691;
 }

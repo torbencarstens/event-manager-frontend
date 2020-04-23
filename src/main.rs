@@ -25,7 +25,7 @@ use chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime};
 use graphql_client::{GraphQLQuery, Response};
 use ics::properties::{Class, Created, Description, DtEnd, DtStart, Status, Summary, URL};
 use rocket::{Request, request};
-use rocket::request::{FlashMessage, FromRequest, Outcome};
+use rocket::request::{FlashMessage, Form, FromRequest, Outcome};
 use rocket::response::{Content, Flash, Redirect, Stream};
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::handlebars::{Context, Handlebars, Helper, HelperResult, JsonRender, JsonValue, Output, Renderable, RenderContext, RenderError};
@@ -52,6 +52,85 @@ struct Location {
     country: String,
     building: Option<String>,
     maps_link: String,
+}
+
+#[derive(Clone, Debug, Deserialize, FromForm, GraphQLQuery, Serialize)]
+#[graphql(
+schema_path = "resources/schema.graphql",
+query_path = "resources/mutations/location.graphql",
+response_derives = "Deserialize, Serialize, Debug"
+)]
+struct LocationMutation {
+    name: String,
+    website: Option<String>,
+    street: String,
+    street_number: i64,
+    city: String,
+    postal_code: i64,
+    country: String,
+    building: Option<String>,
+    maps_link: String,
+}
+
+impl LocationMutation {
+    fn add(self) -> io::Result<Location> {
+        let ioerror = |desc| io::Error::new(io::ErrorKind::Other, desc);
+        let body = LocationMutation::build_query(self.into());
+
+
+        let response = match reqwest::blocking::Client::new()
+            .post(&backend_url())
+            .json(&body)
+            .send() {
+            Ok(val) => Ok(val),
+            Err(e) => Err(ioerror(format!("{:#?}", e)))
+        }?;
+        let response: Response<location_mutation::ResponseData> = response.json().map_err(|e|
+            ioerror(format!("Couldn't get successful response from server: {}", e))
+        )?;
+        let data = response.data.ok_or(
+            ioerror(format!("Couldn't get data field from response: {:?}", response.errors.and_then(|x| Some(x.into_iter().map(|x| x.message).collect::<Vec<String>>().join(" | ")))))
+        )?;
+
+        Ok(data
+            .location
+            .into())
+    }
+}
+
+impl Into<Location> for location_mutation::LocationMutationLocation {
+    fn into(self) -> Location {
+        Location {
+            id: self.id,
+            name: self.name,
+            website: self.website,
+            street: self.street,
+            street_number: self.street_number as i32,
+            city: self.city,
+            postal_code: self.postal_code as i32,
+            country: self.country,
+            building: self.building,
+            maps_link: self.maps_link,
+        }
+    }
+}
+
+impl Into<location_mutation::Variables> for LocationMutation {
+    fn into(self) -> location_mutation::Variables {
+        location_mutation::Variables {
+            input: location_mutation::LocationInput {
+                name: self.name,
+                website: self.website,
+                street: self.street,
+                street_number: self.street_number,
+                city: self.city,
+                postal_code: self.postal_code,
+                country: self.country,
+                building: self.building,
+                maps_link: self.maps_link,
+            }
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, GraphQLQuery, Serialize)]
@@ -675,6 +754,54 @@ fn location(id: i64) -> Template {
     Template::render("location", context)
 }
 
+#[get("/location/<id>/edit")]
+fn location_edit(id: i64) -> Template {
+    let location = if id != 0 {
+        get_location(id).unwrap() // TODO
+    } else {
+        Location {
+            id: 0,
+            name: "".to_string(),
+            website: None,
+            street: "".to_string(),
+            street_number: 0,
+            city: "".to_string(),
+            postal_code: 0,
+            country: "".to_string(),
+            building: None,
+            maps_link: "".to_string(),
+        }
+    };
+
+    let context = LocationTemplateContext {
+        title: location.name.clone(),
+        parent: "layout",
+        location,
+        events: vec![],
+    };
+
+    Template::render("edit/location", context)
+}
+
+#[post("/location/<id>/submit", data = "<location>")]
+fn location_submit(id: Option<i64>, location: Form<LocationMutation>) -> Redirect {
+    // let location = get_location(id.unwrap()).unwrap(); // TODO
+    //
+    // let context = LocationTemplateContext {
+    //     title: location.name.clone(),
+    //     parent: "layout",
+    //     location,
+    //     events: vec![],
+    // };
+
+    let result = location.0.add();
+    println!("r: {:#?}", result);
+
+    // Redirect::to("{TODO}")
+    Redirect::to("/locations")
+}
+
+
 struct Session {
     test: String
 }
@@ -720,6 +847,8 @@ fn main() {
             tag,
             locations,
             locations_numbered,
+            location_edit,
+            location_submit,
         ])
         .mount("/public", StaticFiles::from("public/"))
         .launch();

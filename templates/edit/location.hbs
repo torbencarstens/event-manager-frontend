@@ -1,0 +1,37 @@
+{{#*inline "page"}}
+    <form action="/location/{{ unwrap_or location.id "0" }}/submit" method="POST"
+          class="list-group-item background-secondary event-location"
+          id="location">
+        <div class="form-group">
+            <label for="name" class="required">Name</label>
+            <input name="name" id="name" class="event-location form-control input-background"
+                   value="{{ location.name }}" required/>
+            <label for="website">Website</label>
+            <input name="website" id="website" class="form-control input-background"
+                   value="{{ location.website }}"/>
+            <label for="street" class="required">Street</label>
+            <input class="form-control input-background" name="street" id="street" value="{{ location.street }}"
+                   required/>
+            <label for="street_number" class="required">Street Number</label>
+            <input class="form-control input-background" name="street_number" id="street_number"
+                   value="{{ location.street_number }}" required/>
+            <label for="building">Building</label>
+            <input class="form-control input-background" name="building" id="building" value="{{ location.building }}"/>
+            <label for="postal_code" class="required">Postal Code</label>
+            <input class="form-control input-background" id="postal_code" name="postal_code"
+                   value="{{ location.postal_code }}" required>
+            <label for="city" class="required">City</label>
+            <input class="form-control input-background" id="city" name="city" value="{{ location.city }}"/>
+            <label for="country" class="required">Country</label>
+            <input class="form-control input-background" id="country" name="country" value="{{ location.country }}"
+                   required/>
+            <label for="maps_link" class="required">Maps Link</label>
+            <input class="location-link form-control input-background"
+                   name="maps_link" id="maps_link"
+                   value="{{ location.maps_link }}" required/>
+
+            <input type="submit"/>
+        </div>
+    </form>
+{{/inline}}
+{{~> (parent)~}}

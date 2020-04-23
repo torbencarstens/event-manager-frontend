@@ -1,0 +1,14 @@
+mutation LocationMutation($input: LocationInput!) {
+    location(input: $input) {
+        id
+        name
+        building
+        city
+        country
+        mapsLink
+        postalCode
+        street
+        streetNumber
+        website
+    }
+}

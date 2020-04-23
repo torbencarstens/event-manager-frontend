@@ -1,5 +1,6 @@
 schema {
     query: QueryRoot,
+    mutation: MutationRoot
 }
 
 type QueryRoot {
@@ -8,6 +9,22 @@ type QueryRoot {
     organizer(constraints: Constraints, query: OrganizerQuery): [Organizer!]!
     pagination: Pagination!
     tag(constraints: Constraints, query: TagQuery): [Tag!]!
+}
+
+type MutationRoot {
+    location(input: LocationInput!): Location!
+}
+
+input LocationInput {
+    name: String!
+    website: String
+    street: String!
+    streetNumber: Int!
+    city: String!
+    postalCode: Int!
+    country: String!
+    building: String
+    mapsLink: String!
 }
 
 type InnerEventTag {
